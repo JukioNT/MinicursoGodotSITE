@@ -1,0 +1,90 @@
+[gd_scene load_steps=16 format=3 uid="uid://bvp70vq0nbtjw"]
+
+[ext_resource type="Texture2D" uid="uid://cmlh08i3r2jrs" path="res://Sprites/Player.png" id="1_2qgut"]
+[ext_resource type="Script" path="res://Scripts/player.gd" id="1_fsyq8"]
+[ext_resource type="Script" path="res://Scripts/shooter.gd" id="3_eb6w3"]
+[ext_resource type="PackedScene" uid="uid://br6ijlkde1hrd" path="res://Prefab/Shoot.tscn" id="3_rmubg"]
+[ext_resource type="Script" path="res://Scripts/enemy_spawner.gd" id="5_5e1ox"]
+[ext_resource type="Script" path="res://Scripts/walls.gd" id="5_gxh57"]
+[ext_resource type="PackedScene" uid="uid://nnalfv2dlbow" path="res://Prefab/Enemy1.tscn" id="6_khnie"]
+[ext_resource type="Script" path="res://Scripts/EnemyData.gd" id="6_vph2v"]
+[ext_resource type="PackedScene" uid="uid://dul5gpeumikvf" path="res://Prefab/Enemy2.tscn" id="7_qd3jo"]
+[ext_resource type="PackedScene" uid="uid://dkfoe75faoux4" path="res://Prefab/Enemy3.tscn" id="8_c1bwj"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2fffo"]
+size = Vector2(47, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_n5p0m"]
+size = Vector2(20, 678)
+
+[sub_resource type="Resource" id="Resource_dgma2"]
+script = ExtResource("6_vph2v")
+scene = ExtResource("6_khnie")
+count = 2
+
+[sub_resource type="Resource" id="Resource_ts7pp"]
+script = ExtResource("6_vph2v")
+scene = ExtResource("7_qd3jo")
+count = 2
+
+[sub_resource type="Resource" id="Resource_8bpm3"]
+script = ExtResource("6_vph2v")
+scene = ExtResource("8_c1bwj")
+count = 2
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Player" type="CharacterBody2D" parent="."]
+script = ExtResource("1_fsyq8")
+
+[node name="Sprite2D" type="Sprite2D" parent="Player"]
+texture_filter = 1
+position = Vector2(555.25, 579)
+scale = Vector2(4.5, 4.5)
+texture = ExtResource("1_2qgut")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+position = Vector2(555.75, 586)
+shape = SubResource("RectangleShape2D_2fffo")
+
+[node name="Shooter" type="Node2D" parent="Player"]
+position = Vector2(555.25, 561)
+script = ExtResource("3_eb6w3")
+shoot = ExtResource("3_rmubg")
+
+[node name="Walls" type="StaticBody2D" parent="."]
+script = ExtResource("5_gxh57")
+
+[node name="Wall_R" type="CollisionShape2D" parent="Walls"]
+position = Vector2(-10, 332)
+shape = SubResource("RectangleShape2D_n5p0m")
+
+[node name="Wall_L" type="CollisionShape2D" parent="Walls"]
+position = Vector2(1163, 327)
+shape = SubResource("RectangleShape2D_n5p0m")
+
+[node name="EnemySpawner" type="Node2D" parent="." node_paths=PackedStringArray("enemy_count_hud")]
+script = ExtResource("5_5e1ox")
+enemies = Array[ExtResource("6_vph2v")]([SubResource("Resource_dgma2"), SubResource("Resource_ts7pp"), SubResource("Resource_8bpm3")])
+start_speed = 15
+speed_rise_per_enemy = 0.3
+enemy_count_hud = NodePath("../Control/Label")
+
+[node name="Timer" type="Timer" parent="EnemySpawner"]
+wait_time = 2.0
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 291.0
+offset_bottom = 214.0
+
+[node name="Label" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 3.0
+offset_right = 102.0
+offset_bottom = 26.0
+text = "Enemies: 30"
+
+[connection signal="timeout" from="EnemySpawner/Timer" to="EnemySpawner" method="_on_timer_timeout"]

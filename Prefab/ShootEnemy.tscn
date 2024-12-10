@@ -1,0 +1,20 @@
+[gd_scene load_steps=4 format=3 uid="uid://fi8n5svodjy"]
+
+[ext_resource type="Texture2D" uid="uid://d01tjdx26koy0" path="res://Sprites/Shoot.png" id="1_73tts"]
+[ext_resource type="Script" path="res://Scripts/shoot_enemy.gd" id="1_shfw7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0lknb"]
+size = Vector2(2, 4)
+
+[node name="ShootEnemy" type="Area2D"]
+scale = Vector2(2, 2)
+collision_layer = 2
+script = ExtResource("1_shfw7")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_73tts")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_0lknb")
+
+[connection signal="body_shape_entered" from="." to="." method="_on_body_shape_entered"]
